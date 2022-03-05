@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="custom-file-size-creator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/custom_file_size_creator_jar</output-path>
+    <root id="archive" name="custom-file-size-creator.jar">
+      <element id="module-output" name="custom-file-size-creator" />
+    </root>
+  </artifact>
+</component>

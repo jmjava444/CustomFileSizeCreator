@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>110</y>
+      <w>210</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>Main
+--
+- mView: View
+--
++ main(pArgs: String[]): void
++ exit(): void
+- getView(): View
+- run(): void
+- setView(pView: View): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>300</x>
+      <y>110</y>
+      <w>340</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>View
+--
+_+ FRAME_WIDTH = 800: final int_
+_+ FRAME_HEIGHT = 400: final int_
+_+ FRAME_TITLE = "Custom File Size Maker": String_
+- mMain: Main
+- mInstructionLabel: JLabel
+- mTextField: JTextField
+- mSaveButton: JButton
+- mExitButton: JButton
+- mSizeSelectionBox: JComboBox&lt;String&gt;
+--
++ View(pMain: Main) &lt;&lt;ctor&gt;&gt;
++ actionPerformed(pEvent: ActionEvent): void
+- getMain(): Main
+- setMain(pMain: Main): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>230</x>
+      <y>140</y>
+      <w>90</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;70.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>230</x>
+      <y>200</y>
+      <w>90</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>70.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>260</y>
+      <w>210</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>InputReceiver
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>370</y>
+      <w>210</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>SimpleClass</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
