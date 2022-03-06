@@ -12,17 +12,24 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
 public class View extends JFrame implements ActionListener
 {
 	public static final String FRAME_TITLE = "Custom File Size Maker";
+	public static final String BYTES = "Bytes";
+	public static final String KILOBYTES = "Kilobytes";
+	public static final String MEGABYTES = "Megabytes";
+	public static final String GIGABYTES = "Gigabytes";
 	private Main mMain;
 	private JFrame mMainFrame;
 	private JPanel mMainPanel;
 	private JPanel mButtonPanel;
 	private JPanel mTextPanel;
+	private JPanel mConversionTextPanel;
 	private JLabel mFileSizeLabel;
 	private JLabel mUnitsLabel;
+	private JLabel mConversionTextLabel;
 	private JTextField mTextField;
 	private JButton mSaveButton;
 	private JButton mExitButton;
@@ -38,8 +45,10 @@ public class View extends JFrame implements ActionListener
 		mMainPanel = new JPanel();
 		mButtonPanel = new JPanel();
 		mTextPanel = new JPanel();
+		mConversionTextPanel = new JPanel();
 		mFileSizeLabel = new JLabel("File Size: ");
 		mUnitsLabel = new JLabel("Units: ");
+		mConversionTextLabel = new JLabel(" ");
 		mTextField = new JTextField(10);
 		mSizeSelectionBox = new JComboBox<>();
 		mExitButton = new JButton("Exit",
@@ -52,15 +61,48 @@ public class View extends JFrame implements ActionListener
 		mExitButton.addActionListener(this);
 		mSaveButton.setEnabled(false);
 		
+		// Add a key listener to the text field
+		mTextField.setFocusTraversalKeysEnabled(false);
+		KeyListener keyListener = new KeyListener()
+		{
+			@Override
+			public void keyTyped(KeyEvent e)
+			{
+				// Do nothing
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e)
+			{
+				//do nothing
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e)
+			{
+				enableSaveButton();
+				try
+				{
+					restrictMaxCharacters();
+				}
+				catch(NumberFormatException nfe)
+				{
+					clearTextField();
+				}
+			}
+		};
+		mTextField.addKeyListener(keyListener);
+		
 		// Set window properties
 		setLookAndFeel();
 		setWindowProperties();
 		mMainPanel.setLayout(new BoxLayout(mMainPanel, BoxLayout.Y_AXIS));
+		mConversionTextPanel.setLayout(new FlowLayout());
 		mButtonPanel.setLayout(new FlowLayout());
 		mTextPanel.setLayout(new FlowLayout());
 		
 		// Add options to the JComboBox
-		mSizeSelectionBox.addItem("Bytes");
+		mSizeSelectionBox.addItem(BYTES);
 		mSizeSelectionBox.addItem("Kilobytes");
 		mSizeSelectionBox.addItem("Megabytes");
 		mSizeSelectionBox.addItem("Gigabytes");
@@ -72,6 +114,9 @@ public class View extends JFrame implements ActionListener
 		mTextPanel.add(mUnitsLabel);
 		mTextPanel.add(mSizeSelectionBox);
 		
+		// Add components to conversion text panel
+		mConversionTextPanel.add(mConversionTextLabel);
+		
 		// Add components to button panel
 		mButtonPanel.add(mSaveButton);
 		mButtonPanel.add(new JPanel());
@@ -79,6 +124,7 @@ public class View extends JFrame implements ActionListener
 		
 		// Add components to main panel
 		mMainPanel.add(mTextPanel);
+		mMainPanel.add(mConversionTextPanel);
 		mMainPanel.add(mButtonPanel);
 		
 		// Add components to main frame
@@ -89,7 +135,71 @@ public class View extends JFrame implements ActionListener
 		mMainFrame.setVisible(true);
 	}
 	
-	//TODO Make a method to manage maximum input from the text field
+	private void restrictMaxCharacters() throws NumberFormatException
+	{
+		if(!mTextField.getText().isEmpty())
+		{
+			if(mSizeSelectionBox.getSelectedItem().toString().equals(BYTES))
+			{
+				showMessageAndClear(BYTES);
+			}
+			else if(mSizeSelectionBox.getSelectedItem().toString().equals(KILOBYTES))
+			{
+				showMessageAndClear(KILOBYTES);
+			}
+			else if(mSizeSelectionBox.getSelectedItem().toString().equals(MEGABYTES))
+			{
+				showMessageAndClear(MEGABYTES);
+			}
+			else if(mSizeSelectionBox.getSelectedItem().toString().equals(GIGABYTES))
+			{
+				showMessageAndClear(GIGABYTES);
+			}
+		}
+	}
+	
+	private void showMessageAndClear(String units)
+	{
+		long maxFileSize;
+		if(units.equals(BYTES))
+		{
+			maxFileSize = 64000000000L;
+		}
+		else if(units.equals(KILOBYTES))
+		{
+			maxFileSize = 64000000L;
+		}
+		else if(units.equals(MEGABYTES))
+		{
+			maxFileSize = 64000L;
+		}
+		else if(units.equals(GIGABYTES))
+		{
+			maxFileSize = 64L;
+		}
+		else
+		{
+			maxFileSize = 0L;
+		}
+		if(Long.parseLong(mTextField.getText()) > maxFileSize)
+		{
+			messageBox("You cannot enter a number larger than " +
+			           maxFileSize + " " + units + " = 64GB");
+			clearTextField();
+		}
+	}
+	
+	private void enableSaveButton()
+	{
+		if(!mTextField.getText().isEmpty())
+		{
+			mSaveButton.setEnabled(true);
+		}
+		else
+		{
+			mSaveButton.setEnabled(false);
+		}
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent pEvent)
@@ -97,6 +207,13 @@ public class View extends JFrame implements ActionListener
 		if(pEvent.getSource() == mExitButton)
 		{
 			System.exit(0);
+		}
+		if(pEvent.getSource() == mTextField)
+		{
+			if(!mTextField.getText().isEmpty())
+			{
+				mSaveButton.setEnabled(true);
+			}
 		}
 	}
 	
@@ -160,5 +277,15 @@ public class View extends JFrame implements ActionListener
 	private JTextField getTextField()
 	{
 		return mTextField;
+	}
+	
+	private void clearTextField()
+	{
+		mTextField.setText("");
+	}
+	
+	public void messageBox(String pMessage)
+	{
+		JOptionPane.showMessageDialog(mMainFrame, pMessage, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 }
