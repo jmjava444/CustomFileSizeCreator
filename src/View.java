@@ -12,7 +12,6 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 
 public class View extends JFrame implements ActionListener
 {
@@ -21,19 +20,20 @@ public class View extends JFrame implements ActionListener
 	public static final String KILOBYTES = "Kilobytes";
 	public static final String MEGABYTES = "Megabytes";
 	public static final String GIGABYTES = "Gigabytes";
+	public static final long MAX_FILE_SIZE_IN_GB = 64L;
 	private Main mMain;
 	private JFrame mMainFrame;
 	private JPanel mMainPanel;
 	private JPanel mButtonPanel;
 	private JPanel mTextPanel;
-	private JPanel mConversionTextPanel;
+	private JPanel mSpacerPanel;
 	private JLabel mFileSizeLabel;
 	private JLabel mUnitsLabel;
-	private JLabel mConversionTextLabel;
 	private JTextField mTextField;
 	private JButton mSaveButton;
 	private JButton mExitButton;
 	private JComboBox<String> mSizeSelectionBox;
+	private JProgressBar mProgressBar;
 	
 	public View(Main pMain)
 	{
@@ -45,10 +45,9 @@ public class View extends JFrame implements ActionListener
 		mMainPanel = new JPanel();
 		mButtonPanel = new JPanel();
 		mTextPanel = new JPanel();
-		mConversionTextPanel = new JPanel();
+		mSpacerPanel = new JPanel();
 		mFileSizeLabel = new JLabel("File Size: ");
 		mUnitsLabel = new JLabel("Units: ");
-		mConversionTextLabel = new JLabel(" ");
 		mTextField = new JTextField(10);
 		mSizeSelectionBox = new JComboBox<>();
 		mExitButton = new JButton("Exit",
@@ -62,7 +61,7 @@ public class View extends JFrame implements ActionListener
 		mSaveButton.setEnabled(false);
 		
 		// Add a key listener to the text field
-		mTextField.setFocusTraversalKeysEnabled(false);
+		mTextField.setFocusTraversalKeysEnabled(true);
 		KeyListener keyListener = new KeyListener()
 		{
 			@Override
@@ -80,15 +79,15 @@ public class View extends JFrame implements ActionListener
 			@Override
 			public void keyReleased(KeyEvent e)
 			{
-				enableSaveButton();
 				try
 				{
-					restrictMaxCharacters();
+					detectTextFieldInput();
 				}
 				catch(NumberFormatException nfe)
 				{
 					clearTextField();
 				}
+				detectEnableSaveButton();
 			}
 		};
 		mTextField.addKeyListener(keyListener);
@@ -97,15 +96,15 @@ public class View extends JFrame implements ActionListener
 		setLookAndFeel();
 		setWindowProperties();
 		mMainPanel.setLayout(new BoxLayout(mMainPanel, BoxLayout.Y_AXIS));
-		mConversionTextPanel.setLayout(new FlowLayout());
+		mSpacerPanel.setLayout(new FlowLayout());
 		mButtonPanel.setLayout(new FlowLayout());
 		mTextPanel.setLayout(new FlowLayout());
 		
 		// Add options to the JComboBox
 		mSizeSelectionBox.addItem(BYTES);
-		mSizeSelectionBox.addItem("Kilobytes");
-		mSizeSelectionBox.addItem("Megabytes");
-		mSizeSelectionBox.addItem("Gigabytes");
+		mSizeSelectionBox.addItem(KILOBYTES);
+		mSizeSelectionBox.addItem(MEGABYTES);
+		mSizeSelectionBox.addItem(GIGABYTES);
 		mSizeSelectionBox.addActionListener(this);
 		
 		// Add components to text panel
@@ -114,9 +113,6 @@ public class View extends JFrame implements ActionListener
 		mTextPanel.add(mUnitsLabel);
 		mTextPanel.add(mSizeSelectionBox);
 		
-		// Add components to conversion text panel
-		mConversionTextPanel.add(mConversionTextLabel);
-		
 		// Add components to button panel
 		mButtonPanel.add(mSaveButton);
 		mButtonPanel.add(new JPanel());
@@ -124,7 +120,7 @@ public class View extends JFrame implements ActionListener
 		
 		// Add components to main panel
 		mMainPanel.add(mTextPanel);
-		mMainPanel.add(mConversionTextPanel);
+		mMainPanel.add(mSpacerPanel);
 		mMainPanel.add(mButtonPanel);
 		
 		// Add components to main frame
@@ -135,7 +131,7 @@ public class View extends JFrame implements ActionListener
 		mMainFrame.setVisible(true);
 	}
 	
-	private void restrictMaxCharacters() throws NumberFormatException
+	private void detectTextFieldInput() throws NumberFormatException
 	{
 		if(!mTextField.getText().isEmpty())
 		{
@@ -158,38 +154,46 @@ public class View extends JFrame implements ActionListener
 		}
 	}
 	
-	private void showMessageAndClear(String units)
+	private void showMessageAndClear(String pUnits)
 	{
-		long maxFileSize;
-		if(units.equals(BYTES))
-		{
-			maxFileSize = 64000000000L;
-		}
-		else if(units.equals(KILOBYTES))
-		{
-			maxFileSize = 64000000L;
-		}
-		else if(units.equals(MEGABYTES))
-		{
-			maxFileSize = 64000L;
-		}
-		else if(units.equals(GIGABYTES))
-		{
-			maxFileSize = 64L;
-		}
-		else
-		{
-			maxFileSize = 0L;
-		}
-		if(Long.parseLong(mTextField.getText()) > maxFileSize)
+		long multiplier;
+		long maxFileSizeInGigabytes = MAX_FILE_SIZE_IN_GB;
+		multiplier = getMultiplier(pUnits);
+		if(Long.parseLong(mTextField.getText()) > (multiplier * maxFileSizeInGigabytes))
 		{
 			messageBox("You cannot enter a number larger than " +
-			           maxFileSize + " " + units + " = 64GB");
+			           (multiplier * maxFileSizeInGigabytes) + " " + pUnits + " = 64GB");
 			clearTextField();
 		}
 	}
 	
-	private void enableSaveButton()
+	private long getMultiplier(String pUnits)
+	{
+		long multiplier;
+		if(pUnits.equals(BYTES))
+		{
+			multiplier = 1000000000L;
+		}
+		else if(pUnits.equals(KILOBYTES))
+		{
+			multiplier = 1000000L;
+		}
+		else if(pUnits.equals(MEGABYTES))
+		{
+			multiplier = 1000L;
+		}
+		else if(pUnits.equals(GIGABYTES))
+		{
+			multiplier = 1L;
+		}
+		else
+		{
+			multiplier = 0L;
+		}
+		return multiplier;
+	}
+	
+	private void detectEnableSaveButton()
 	{
 		if(!mTextField.getText().isEmpty())
 		{
