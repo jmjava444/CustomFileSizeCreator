@@ -11,7 +11,11 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 
 public class View extends JFrame implements ActionListener
 {
@@ -34,6 +38,7 @@ public class View extends JFrame implements ActionListener
 	private JButton mExitButton;
 	private JComboBox<String> mSizeSelectionBox;
 	private JProgressBar mProgressBar;
+	private JFileChooser mFileChooser;
 	
 	public View(Main pMain)
 	{
@@ -81,7 +86,7 @@ public class View extends JFrame implements ActionListener
 			{
 				try
 				{
-					detectTextFieldInput();
+					handleTextFieldInput();
 				}
 				catch(NumberFormatException nfe)
 				{
@@ -131,30 +136,30 @@ public class View extends JFrame implements ActionListener
 		mMainFrame.setVisible(true);
 	}
 	
-	private void detectTextFieldInput() throws NumberFormatException
+	private void handleTextFieldInput() throws NumberFormatException
 	{
 		if(!mTextField.getText().isEmpty())
 		{
 			if(mSizeSelectionBox.getSelectedItem().toString().equals(BYTES))
 			{
-				showMessageAndClear(BYTES);
+				showInvalidMessageBox(BYTES);
 			}
 			else if(mSizeSelectionBox.getSelectedItem().toString().equals(KILOBYTES))
 			{
-				showMessageAndClear(KILOBYTES);
+				showInvalidMessageBox(KILOBYTES);
 			}
 			else if(mSizeSelectionBox.getSelectedItem().toString().equals(MEGABYTES))
 			{
-				showMessageAndClear(MEGABYTES);
+				showInvalidMessageBox(MEGABYTES);
 			}
 			else if(mSizeSelectionBox.getSelectedItem().toString().equals(GIGABYTES))
 			{
-				showMessageAndClear(GIGABYTES);
+				showInvalidMessageBox(GIGABYTES);
 			}
 		}
 	}
 	
-	private void showMessageAndClear(String pUnits)
+	private void showInvalidMessageBox(String pUnits)
 	{
 		long multiplier;
 		long maxFileSizeInGigabytes = MAX_FILE_SIZE_IN_GB;
@@ -219,6 +224,44 @@ public class View extends JFrame implements ActionListener
 				mSaveButton.setEnabled(true);
 			}
 		}
+		if(pEvent.getSource() == mSaveButton)
+		{
+			System.out.println("Save Button Clicked");
+			saveFile();
+		}
+	}
+	
+	private void saveFile()
+	{
+		mFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		int saveDialog = mFileChooser.showSaveDialog(null);
+		File fileToBeSaved;
+		PrintWriter fileWriter;
+		if(saveDialog == JFileChooser.APPROVE_OPTION)
+		{
+			String fileSaveLocation = mFileChooser.getSelectedFile().getAbsolutePath();
+			//System.out.println(fileSaveLocation);
+			try
+			{
+				fileWriter = new PrintWriter(fileSaveLocation);
+				
+			}
+			catch(FileNotFoundException e)
+			{
+				System.err.println("Cannot write to file. FileNotFoundException");
+			}
+		}
+	}
+	
+	private String printToFile()
+	{
+		int maxIterations = Integer.parseInt(mTextField.getText());
+		long multiplier = getMultiplier(mSizeSelectionBox.getSelectedItem().toString());
+		String output = "";
+		for(int i = 0; i < maxIterations; i++)
+		{
+			output += Double.toString(Math.random() * 10.0);
+		}
 	}
 	
 	private ImageIcon createImageIcon(String path) {
@@ -249,18 +292,18 @@ public class View extends JFrame implements ActionListener
 		}
 		catch (UnsupportedLookAndFeelException e) {
 			// handle exception
-			System.out.println("Unsupported L&F");
+			System.err.println("Unsupported Look & Feel Exception");
 		}
 		catch (ClassNotFoundException e) {
 			// handle exception
-			System.out.println("Class not Found");
+			System.err.println("Class not Found Exception");
 		}
 		catch (InstantiationException e) {
-			System.out.println("Instantiation Exception");
+			System.err.println("Instantiation Exception");
 		}
 		catch (IllegalAccessException e) {
 			// handle exception
-			System.out.println("Illegal access exception");
+			System.err.println("Illegal Access Exception");
 		}
 	}
 	
