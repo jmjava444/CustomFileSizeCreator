@@ -25,25 +25,39 @@ public class View extends JFrame implements ActionListener
 	public static final String MEGABYTES = "Megabytes";
 	public static final String GIGABYTES = "Gigabytes";
 	public static final long MAX_FILE_SIZE_IN_GB = 64L;
+	
 	private Main mMain;
+	
+	private FileSizeCalculator mFileSizeCalculator;
+	
 	private JFrame mMainFrame;
+	
 	private JPanel mMainPanel;
 	private JPanel mButtonPanel;
 	private JPanel mTextPanel;
 	private JPanel mSpacerPanel;
+	
 	private JLabel mFileSizeLabel;
 	private JLabel mUnitsLabel;
+	
 	private JTextField mTextField;
+	
 	private JButton mSaveButton;
 	private JButton mExitButton;
-	private JComboBox<String> mSizeSelectionBox;
+	
+	private JComboBox<String> mUnitsComboBox;
+	
 	private JProgressBar mProgressBar;
+	
 	private JFileChooser mFileChooser;
 	
 	public View(Main pMain)
 	{
 		// Save a reference to the Main object
 		setMain(pMain);
+		
+		//Instantiate a new FileSizeCalculator Object
+		mFileSizeCalculator = new FileSizeCalculator(this);
 		
 		// Initialize components in the window
 		mMainFrame = new JFrame();
@@ -54,7 +68,7 @@ public class View extends JFrame implements ActionListener
 		mFileSizeLabel = new JLabel("File Size: ");
 		mUnitsLabel = new JLabel("Units: ");
 		mTextField = new JTextField(10);
-		mSizeSelectionBox = new JComboBox<>();
+		mUnitsComboBox = new JComboBox<>();
 		mExitButton = new JButton("Exit",
 				createImageIcon("/img/exit-icon.png"));
 		mSaveButton = new JButton("Save...",
@@ -106,17 +120,17 @@ public class View extends JFrame implements ActionListener
 		mTextPanel.setLayout(new FlowLayout());
 		
 		// Add options to the JComboBox
-		mSizeSelectionBox.addItem(BYTES);
-		mSizeSelectionBox.addItem(KILOBYTES);
-		mSizeSelectionBox.addItem(MEGABYTES);
-		mSizeSelectionBox.addItem(GIGABYTES);
-		mSizeSelectionBox.addActionListener(this);
+		mUnitsComboBox.addItem(BYTES);
+		mUnitsComboBox.addItem(KILOBYTES);
+		mUnitsComboBox.addItem(MEGABYTES);
+		mUnitsComboBox.addItem(GIGABYTES);
+		mUnitsComboBox.addActionListener(this);
 		
 		// Add components to text panel
 		mTextPanel.add(mFileSizeLabel);
 		mTextPanel.add(mTextField);
 		mTextPanel.add(mUnitsLabel);
-		mTextPanel.add(mSizeSelectionBox);
+		mTextPanel.add(mUnitsComboBox);
 		
 		// Add components to button panel
 		mButtonPanel.add(mSaveButton);
@@ -140,19 +154,19 @@ public class View extends JFrame implements ActionListener
 	{
 		if(!mTextField.getText().isEmpty())
 		{
-			if(mSizeSelectionBox.getSelectedItem().toString().equals(BYTES))
+			if(getCurrentUnit().equals(BYTES))
 			{
 				showInvalidMessageBox(BYTES);
 			}
-			else if(mSizeSelectionBox.getSelectedItem().toString().equals(KILOBYTES))
+			else if(getCurrentUnit().equals(KILOBYTES))
 			{
 				showInvalidMessageBox(KILOBYTES);
 			}
-			else if(mSizeSelectionBox.getSelectedItem().toString().equals(MEGABYTES))
+			else if(getCurrentUnit().equals(MEGABYTES))
 			{
 				showInvalidMessageBox(MEGABYTES);
 			}
-			else if(mSizeSelectionBox.getSelectedItem().toString().equals(GIGABYTES))
+			else if(getCurrentUnit().equals(GIGABYTES))
 			{
 				showInvalidMessageBox(GIGABYTES);
 			}
@@ -256,7 +270,7 @@ public class View extends JFrame implements ActionListener
 	private String printToFile()
 	{
 		int maxIterations = Integer.parseInt(mTextField.getText());
-		long multiplier = getMultiplier(mSizeSelectionBox.getSelectedItem().toString());
+		long multiplier = getMultiplier(getCurrentUnit());
 		String output = "";
 		for(int i = 0; i < maxIterations; i++)
 		{
@@ -334,5 +348,24 @@ public class View extends JFrame implements ActionListener
 	public void messageBox(String pMessage)
 	{
 		JOptionPane.showMessageDialog(mMainFrame, pMessage, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public String getCurrentUnit()
+	{
+		return mUnitsComboBox.getSelectedItem().toString();
+	}
+	
+	public long getTextFieldLong()
+	{
+		try
+		{
+			return Long.parseLong(mTextField.getText());
+		}
+		catch(NumberFormatException e)
+		{
+			System.err.println("There was an error parsing long");
+			e.printStackTrace();
+			return 0L;
+		}
 	}
 }
