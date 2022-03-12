@@ -11,11 +11,11 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import static java.lang.Thread.sleep;
 
 public class View extends JFrame implements ActionListener
 {
@@ -47,8 +47,6 @@ public class View extends JFrame implements ActionListener
 	
 	private JComboBox<String> mUnitsComboBox;
 	
-	private JProgressBar mProgressBar;
-	
 	private JFileChooser mFileChooser;
 	
 	public View(Main pMain)
@@ -73,6 +71,7 @@ public class View extends JFrame implements ActionListener
 				createImageIcon("/img/exit-icon.png"));
 		mSaveButton = new JButton("Save...",
 				createImageIcon("/img/save-icon.png"));
+		mFileChooser = new JFileChooser();
 		
 		// Modify some button properties
 		mSaveButton.addActionListener(this);
@@ -148,6 +147,7 @@ public class View extends JFrame implements ActionListener
 		// Last operation: pack and set visible
 		mMainFrame.pack();
 		mMainFrame.setVisible(true);
+		
 	}
 	
 	private void handleTextFieldInput() throws NumberFormatException
@@ -191,15 +191,15 @@ public class View extends JFrame implements ActionListener
 		long multiplier;
 		if(pUnits.equals(BYTES))
 		{
-			multiplier = 1000000000L;
+			multiplier = 1073741824L;
 		}
 		else if(pUnits.equals(KILOBYTES))
 		{
-			multiplier = 1000000L;
+			multiplier = 1048576L;
 		}
 		else if(pUnits.equals(MEGABYTES))
 		{
-			multiplier = 1000L;
+			multiplier = 1024L;
 		}
 		else if(pUnits.equals(GIGABYTES))
 		{
@@ -240,41 +240,25 @@ public class View extends JFrame implements ActionListener
 		}
 		if(pEvent.getSource() == mSaveButton)
 		{
-			System.out.println("Save Button Clicked");
-			saveFile();
-		}
-	}
-	
-	private void saveFile()
-	{
-		mFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-		int saveDialog = mFileChooser.showSaveDialog(null);
-		File fileToBeSaved;
-		PrintWriter fileWriter;
-		if(saveDialog == JFileChooser.APPROVE_OPTION)
-		{
-			String fileSaveLocation = mFileChooser.getSelectedFile().getAbsolutePath();
-			//System.out.println(fileSaveLocation);
-			try
+			long fileSizeInBytes = mFileSizeCalculator.calculate();
+			mFileChooser.setAcceptAllFileFilterUsed(false);
+			mFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Test File",
+					".test"));
+			int returnValue = mFileChooser.showSaveDialog(this);
+			if(returnValue == JFileChooser.APPROVE_OPTION)
 			{
-				fileWriter = new PrintWriter(fileSaveLocation);
-				
+				try
+				{
+					mFileSizeCalculator.createFile(fileSizeInBytes,
+							mFileChooser.getSelectedFile().getAbsolutePath() + ".test");
+				}
+				catch(FileNotFoundException e)
+				{
+					messageBox("Could not write to specified path or file. " +
+					           "Check to make sure the file is writable.");
+					e.printStackTrace();
+				}
 			}
-			catch(FileNotFoundException e)
-			{
-				System.err.println("Cannot write to file. FileNotFoundException");
-			}
-		}
-	}
-	
-	private String printToFile()
-	{
-		int maxIterations = Integer.parseInt(mTextField.getText());
-		long multiplier = getMultiplier(getCurrentUnit());
-		String output = "";
-		for(int i = 0; i < maxIterations; i++)
-		{
-			output += Double.toString(Math.random() * 10.0);
 		}
 	}
 	
