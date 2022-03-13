@@ -18,7 +18,7 @@ import static java.lang.Thread.sleep;
 
 public class View extends JFrame implements ActionListener
 {
-	public static final String FRAME_TITLE = "Custom File Size Maker";
+	public static final String FRAME_TITLE = "Custom File Size Creator";
 	public static final String BYTES = "Bytes";
 	public static final String KILOBYTES = "Kilobytes";
 	public static final String MEGABYTES = "Megabytes";
