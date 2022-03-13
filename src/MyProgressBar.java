@@ -1,3 +1,13 @@
+/****************************************************************************
+ * Class: MyProgressBar (MyProgressBar.java)
+ *
+ * DESCRIPTION
+ * This class defines an extension of JProgressBar that contains some more
+ * information pertaining to the program.
+ *
+ * Copyright 2022, Joshua McKenzie, All rights reserved.
+ ***************************************************************************/
+
 import javax.swing.*;
 
 public class MyProgressBar extends JProgressBar implements Runnable
@@ -32,7 +42,6 @@ public class MyProgressBar extends JProgressBar implements Runnable
 	
 	public boolean updateProgressBar()
 	{
-		boolean done = false;
 		while(isThreadAlive())
 		{
 			super.setEnabled(true);
@@ -44,7 +53,6 @@ public class MyProgressBar extends JProgressBar implements Runnable
 				"File Written", JOptionPane.INFORMATION_MESSAGE);
 		super.setEnabled(false);
 		super.setVisible(false);
-		done = true;
-		return done;
+		return true; // <- isDone?
 	}
 }

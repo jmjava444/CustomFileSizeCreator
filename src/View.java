@@ -27,26 +27,24 @@ public class View extends JFrame implements ActionListener
 	
 	private Main mMain;
 	
-	private JFrame mMainFrame;
+	private final JFrame mMainFrame;
 	
-	private JPanel mMainPanel;
-	private JPanel mButtonPanel;
-	private JPanel mTextPanel;
-	private JPanel mProgressBarPanel;
+	private final JPanel mMainPanel;
+	private final JPanel mButtonPanel;
+	private final JPanel mTextPanel;
+	private final JPanel mProgressBarPanel;
 	
-	private JLabel mFileSizeLabel;
-	private JLabel mUnitsLabel;
+	private final JLabel mFileSizeLabel;
+	private final JLabel mUnitsLabel;
 	
-	private JTextField mTextField;
+	private final JTextField mTextField;
 	
-	private JButton mSaveButton;
-	private JButton mExitButton;
+	private final JButton mSaveButton;
+	private final JButton mExitButton;
 	
-	private JComboBox<String> mUnitsComboBox;
+	private final JComboBox<String> mUnitsComboBox;
 	
-	private JFileChooser mFileChooser;
-	
-	private FileSizeCalculator mFileSizeCalculator;
+	private final JFileChooser mFileChooser;
 	
 	public View(Main pMain)
 	{
@@ -153,21 +151,12 @@ public class View extends JFrame implements ActionListener
 	{
 		if(!mTextField.getText().isEmpty())
 		{
-			if(getCurrentUnit().equals(BYTES))
+			switch(getCurrentUnit())
 			{
-				invalidNumberMessageBox(BYTES);
-			}
-			else if(getCurrentUnit().equals(KILOBYTES))
-			{
-				invalidNumberMessageBox(KILOBYTES);
-			}
-			else if(getCurrentUnit().equals(MEGABYTES))
-			{
-				invalidNumberMessageBox(MEGABYTES);
-			}
-			else if(getCurrentUnit().equals(GIGABYTES))
-			{
-				invalidNumberMessageBox(GIGABYTES);
+				case BYTES -> invalidNumberMessageBox(BYTES);
+				case KILOBYTES -> invalidNumberMessageBox(KILOBYTES);
+				case MEGABYTES -> invalidNumberMessageBox(MEGABYTES);
+				case GIGABYTES -> invalidNumberMessageBox(GIGABYTES);
 			}
 		}
 	}
@@ -228,7 +217,7 @@ public class View extends JFrame implements ActionListener
 	{
 		if(pEvent.getSource() == mExitButton)
 		{
-			System.exit(0);
+			mMain.exit();
 		}
 		ifSourceIsTextField(pEvent);
 		ifSourceIsSaveButton(pEvent);
@@ -249,7 +238,7 @@ public class View extends JFrame implements ActionListener
 	{
 		if(pEvent.getSource() == mSaveButton)
 		{
-			mFileSizeCalculator = new FileSizeCalculator(this);
+			FileSizeCalculator mFileSizeCalculator = new FileSizeCalculator(this);
 			long fileSizeInBytes = mFileSizeCalculator.calculate();
 			mFileChooser.setAcceptAllFileFilterUsed(false);
 			mFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Test File",

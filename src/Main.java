@@ -5,7 +5,7 @@ import javax.swing.*;
  *
  * DESCRIPTION
  * This program is designed to output a custom file size of the user's
- * choice, and it will output to a .txt file.
+ * choice (containing random chars), and it will output to a .test file.
  *
  * Copyright 2022, Joshua McKenzie, All rights reserved.
  ***************************************************************************/
@@ -24,11 +24,6 @@ public class Main
 	{
 		View view = new View(this);
 		setView(view);
-	}
-	
-	private View getView()
-	{
-		return mView;
 	}
 	
 	private void setView(View pView)

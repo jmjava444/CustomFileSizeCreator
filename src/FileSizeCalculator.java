@@ -1,14 +1,8 @@
-import javax.swing.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-
 /****************************************************************************
  * Class: FileSizeCalculator (FileSizeCalculator.java)
  *
  * DESCRIPTION
- * Stores the status of the JComboBox from View.java, and it stores the
- * JTextField imput. It has methods to perform calculations to make the
+ * This class has methods to perform calculations to make the
  * file.
  *
  * Copyright 2022, Joshua McKenzie, All rights reserved.
@@ -17,7 +11,6 @@ import java.io.PrintWriter;
 public class FileSizeCalculator
 {
 	private View mView;
-	private long mFileSize;
 	
 	private static final long BYTES = 1L;
 	private static final long KILOBYTES = 1024L;
@@ -27,7 +20,6 @@ public class FileSizeCalculator
 	public FileSizeCalculator(View pView)
 	{
 		mView = pView;
-		mFileSize = 0L;
 	}
 	
 	/**
@@ -57,15 +49,5 @@ public class FileSizeCalculator
 			System.err.println("FileSizeCalculator.calculate() failed... Returned 0");
 			return 0L;
 		}
-	}
-	
-	protected int getFileSize()
-	{
-		return (int) mFileSize;
-	}
-	
-	private void setFileSize(long pFileSize)
-	{
-		mFileSize = pFileSize;
 	}
 }

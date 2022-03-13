@@ -1,3 +1,13 @@
+/****************************************************************************
+ * Class: FileCreator (FileCreator.java)
+ *
+ * DESCRIPTION
+ * This class creates the actual file that will be written to the output
+ * destination.
+ *
+ * Copyright 2022, Joshua McKenzie, All rights reserved.
+ ***************************************************************************/
+
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
