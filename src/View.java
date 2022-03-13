@@ -11,7 +11,6 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileNotFoundException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -28,14 +27,12 @@ public class View extends JFrame implements ActionListener
 	
 	private Main mMain;
 	
-	private FileSizeCalculator mFileSizeCalculator;
-	
 	private JFrame mMainFrame;
 	
 	private JPanel mMainPanel;
 	private JPanel mButtonPanel;
 	private JPanel mTextPanel;
-	private JPanel mSpacerPanel;
+	private JPanel mProgressBarPanel;
 	
 	private JLabel mFileSizeLabel;
 	private JLabel mUnitsLabel;
@@ -49,20 +46,18 @@ public class View extends JFrame implements ActionListener
 	
 	private JFileChooser mFileChooser;
 	
+	private FileSizeCalculator mFileSizeCalculator;
+	
 	public View(Main pMain)
 	{
 		// Save a reference to the Main object
 		setMain(pMain);
-		
-		//Instantiate a new FileSizeCalculator Object
-		mFileSizeCalculator = new FileSizeCalculator(this);
 		
 		// Initialize components in the window
 		mMainFrame = new JFrame();
 		mMainPanel = new JPanel();
 		mButtonPanel = new JPanel();
 		mTextPanel = new JPanel();
-		mSpacerPanel = new JPanel();
 		mFileSizeLabel = new JLabel("File Size: ");
 		mUnitsLabel = new JLabel("Units: ");
 		mTextField = new JTextField(10);
@@ -72,6 +67,7 @@ public class View extends JFrame implements ActionListener
 		mSaveButton = new JButton("Save...",
 				createImageIcon("/img/save-icon.png"));
 		mFileChooser = new JFileChooser();
+		mProgressBarPanel = new JPanel(new FlowLayout());
 		
 		// Modify some button properties
 		mSaveButton.addActionListener(this);
@@ -79,42 +75,18 @@ public class View extends JFrame implements ActionListener
 		mSaveButton.setEnabled(false);
 		
 		// Add a key listener to the text field
-		mTextField.setFocusTraversalKeysEnabled(true);
-		KeyListener keyListener = new KeyListener()
-		{
-			@Override
-			public void keyTyped(KeyEvent e)
-			{
-				// Do nothing
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent e)
-			{
-				//do nothing
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent e)
-			{
-				try
-				{
-					handleTextFieldInput();
-				}
-				catch(NumberFormatException nfe)
-				{
-					clearTextField();
-				}
-				detectEnableSaveButton();
-			}
-		};
-		mTextField.addKeyListener(keyListener);
+		addKeyListener();
 		
+		addComponentsToGUI();
+		
+	}
+	
+	private void addComponentsToGUI()
+	{
 		// Set window properties
 		setLookAndFeel();
 		setWindowProperties();
 		mMainPanel.setLayout(new BoxLayout(mMainPanel, BoxLayout.Y_AXIS));
-		mSpacerPanel.setLayout(new FlowLayout());
 		mButtonPanel.setLayout(new FlowLayout());
 		mTextPanel.setLayout(new FlowLayout());
 		
@@ -138,7 +110,7 @@ public class View extends JFrame implements ActionListener
 		
 		// Add components to main panel
 		mMainPanel.add(mTextPanel);
-		mMainPanel.add(mSpacerPanel);
+		mMainPanel.add(mProgressBarPanel);
 		mMainPanel.add(mButtonPanel);
 		
 		// Add components to main frame
@@ -147,7 +119,34 @@ public class View extends JFrame implements ActionListener
 		// Last operation: pack and set visible
 		mMainFrame.pack();
 		mMainFrame.setVisible(true);
-		
+	}
+	
+	private void addKeyListener()
+	{
+		mTextField.setFocusTraversalKeysEnabled(true);
+		KeyListener keyListener = new KeyListener()
+		{
+			@Override
+			public void keyTyped(KeyEvent e) { }
+			
+			@Override
+			public void keyPressed(KeyEvent e) { }
+			
+			@Override
+			public void keyReleased(KeyEvent e)
+			{
+				try
+				{
+					handleTextFieldInput();
+				}
+				catch(NumberFormatException nfe)
+				{
+					clearTextField();
+				}
+				toggleSaveButton();
+			}
+		};
+		mTextField.addKeyListener(keyListener);
 	}
 	
 	private void handleTextFieldInput() throws NumberFormatException
@@ -156,24 +155,24 @@ public class View extends JFrame implements ActionListener
 		{
 			if(getCurrentUnit().equals(BYTES))
 			{
-				showInvalidMessageBox(BYTES);
+				invalidNumberMessageBox(BYTES);
 			}
 			else if(getCurrentUnit().equals(KILOBYTES))
 			{
-				showInvalidMessageBox(KILOBYTES);
+				invalidNumberMessageBox(KILOBYTES);
 			}
 			else if(getCurrentUnit().equals(MEGABYTES))
 			{
-				showInvalidMessageBox(MEGABYTES);
+				invalidNumberMessageBox(MEGABYTES);
 			}
 			else if(getCurrentUnit().equals(GIGABYTES))
 			{
-				showInvalidMessageBox(GIGABYTES);
+				invalidNumberMessageBox(GIGABYTES);
 			}
 		}
 	}
 	
-	private void showInvalidMessageBox(String pUnits)
+	private void invalidNumberMessageBox(String pUnits)
 	{
 		long multiplier;
 		long maxFileSizeInGigabytes = MAX_FILE_SIZE_IN_GB;
@@ -212,7 +211,7 @@ public class View extends JFrame implements ActionListener
 		return multiplier;
 	}
 	
-	private void detectEnableSaveButton()
+	private void toggleSaveButton()
 	{
 		if(!mTextField.getText().isEmpty())
 		{
@@ -231,6 +230,12 @@ public class View extends JFrame implements ActionListener
 		{
 			System.exit(0);
 		}
+		ifSourceIsTextField(pEvent);
+		ifSourceIsSaveButton(pEvent);
+	}
+	
+	private void ifSourceIsTextField(ActionEvent pEvent)
+	{
 		if(pEvent.getSource() == mTextField)
 		{
 			if(!mTextField.getText().isEmpty())
@@ -238,8 +243,13 @@ public class View extends JFrame implements ActionListener
 				mSaveButton.setEnabled(true);
 			}
 		}
+	}
+	
+	private void ifSourceIsSaveButton(ActionEvent pEvent)
+	{
 		if(pEvent.getSource() == mSaveButton)
 		{
+			mFileSizeCalculator = new FileSizeCalculator(this);
 			long fileSizeInBytes = mFileSizeCalculator.calculate();
 			mFileChooser.setAcceptAllFileFilterUsed(false);
 			mFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Test File",
@@ -247,17 +257,22 @@ public class View extends JFrame implements ActionListener
 			int returnValue = mFileChooser.showSaveDialog(this);
 			if(returnValue == JFileChooser.APPROVE_OPTION)
 			{
-				try
-				{
-					mFileSizeCalculator.createFile(fileSizeInBytes,
-							mFileChooser.getSelectedFile().getAbsolutePath() + ".test");
-				}
-				catch(FileNotFoundException e)
-				{
-					messageBox("Could not write to specified path or file. " +
-					           "Check to make sure the file is writable.");
-					e.printStackTrace();
-				}
+				FileCreator filecreator = new FileCreator(fileSizeInBytes,
+						mFileChooser.getSelectedFile() + ".test");
+				Thread fileCreatorThread = new Thread(filecreator);
+				
+				MyProgressBar myProgressBar = new MyProgressBar(0, ((int) (fileSizeInBytes / 1000)),
+						this, fileCreatorThread, filecreator);
+				myProgressBar.setEnabled(true);
+				myProgressBar.setMinimumSize(new Dimension(500, 50));
+				myProgressBar.setAlignmentY(getRootPane().getAlignmentY());
+				mProgressBarPanel.add(myProgressBar);
+				Thread myProgressBarThread = new Thread(myProgressBar);
+				
+				fileCreatorThread.start();
+				myProgressBarThread.start();
+				mMainFrame.pack();
+				mMainFrame.setVisible(true);
 			}
 		}
 	}
@@ -319,6 +334,7 @@ public class View extends JFrame implements ActionListener
 	{
 		mSaveButton.setEnabled(b);
 	}
+	
 	private JTextField getTextField()
 	{
 		return mTextField;
@@ -331,7 +347,8 @@ public class View extends JFrame implements ActionListener
 	
 	public void messageBox(String pMessage)
 	{
-		JOptionPane.showMessageDialog(mMainFrame, pMessage, "Error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(mMainFrame, pMessage,
+				"Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	public String getCurrentUnit()

@@ -14,31 +14,20 @@ import java.io.PrintWriter;
  * Copyright 2022, Joshua McKenzie, All rights reserved.
  ***************************************************************************/
 
-public class FileSizeCalculator implements Runnable
+public class FileSizeCalculator
 {
 	private View mView;
-	private String mFileSize;
-	private long mUnits;
-	private int i;
-	ProgressBarWindow progressBarWindow;
+	private long mFileSize;
 	
 	private static final long BYTES = 1L;
 	private static final long KILOBYTES = 1024L;
 	private static final long MEGABYTES = 1048576L;
 	private static final long GIGABYTES = 1073741824L;
 	
-	public FileSizeCalculator(View pView, String pFileSize, long pUnits)
-	{
-		mView = pView;
-		mFileSize = pFileSize;
-		mUnits = pUnits;
-	}
-	
 	public FileSizeCalculator(View pView)
 	{
 		mView = pView;
-		mFileSize = "0";
-		mUnits = 0L;
+		mFileSize = 0L;
 	}
 	
 	/**
@@ -70,55 +59,13 @@ public class FileSizeCalculator implements Runnable
 		}
 	}
 	
-	/**
-	 * Creates a text file comprised of random digits, and you can specify the size.
-	 *
-	 * @param pSizeInBytes File size in bytes
-	 * @param pPath Pathname of the specified file
-	 * @throws FileNotFoundException Make sure to resolve in case it cannot write to the file
-	 */
-	public void createFile(long pSizeInBytes, String pPath) throws FileNotFoundException
-	{
-		i = 0;
-		File file = new File(pPath);
-		PrintWriter out = new PrintWriter(file);
-		progressBarWindow = new ProgressBarWindow(mView, 0, Integer.parseInt(mFileSize));
-		while(i < pSizeInBytes)
-		{
-			writeChar(out);
-			i++;
-		}
-		out.close();
-	}
-	
 	protected int getFileSize()
 	{
-		return Integer.parseInt(mFileSize);
+		return (int) mFileSize;
 	}
 	
-	private void setFileSize(String pFileSize)
+	private void setFileSize(long pFileSize)
 	{
 		mFileSize = pFileSize;
-	}
-	
-	private void setUnits(long pUnits)
-	{
-		mUnits = pUnits;
-	}
-	
-	private void writeChar(PrintWriter pw)
-	{
-		pw.print((int) (Math.random() * 10.0));
-	}
-	
-	public int getCurrentProgress()
-	{
-		return i;
-	}
-	
-	@Override
-	public void run(long pSizeInBytes, String pPath)
-	{
-		createFile(pSizeInBytes, pPath);
 	}
 }
