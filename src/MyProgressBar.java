@@ -40,7 +40,7 @@ public class MyProgressBar extends JProgressBar implements Runnable
 		return false;
 	}
 	
-	public boolean updateProgressBar()
+	public void updateProgressBar()
 	{
 		while(isThreadAlive())
 		{
@@ -53,6 +53,5 @@ public class MyProgressBar extends JProgressBar implements Runnable
 				"File Written", JOptionPane.INFORMATION_MESSAGE);
 		super.setEnabled(false);
 		super.setVisible(false);
-		return true; // <- isDone?
 	}
 }

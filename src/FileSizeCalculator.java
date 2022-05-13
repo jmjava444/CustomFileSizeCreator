@@ -28,26 +28,19 @@ public class FileSizeCalculator
 	 */
 	public long calculate()
 	{
-		if(mView.getCurrentUnit().equals(View.BYTES))
+		switch(mView.getCurrentUnit())
 		{
-			return mView.getTextFieldLong() * BYTES;
-		}
-		else if(mView.getCurrentUnit().equals(View.KILOBYTES))
-		{
-			return mView.getTextFieldLong() * KILOBYTES;
-		}
-		else if(mView.getCurrentUnit().equals(View.MEGABYTES))
-		{
-			return mView.getTextFieldLong() * MEGABYTES;
-		}
-		else if(mView.getCurrentUnit().equals(View.GIGABYTES))
-		{
-			return mView.getTextFieldLong() * GIGABYTES;
-		}
-		else
-		{
-			System.err.println("FileSizeCalculator.calculate() failed... Returned 0");
-			return 0L;
+			case View.BYTES:
+				return mView.getTextFieldLong() * BYTES;
+			case View.KILOBYTES:
+				return mView.getTextFieldLong() * KILOBYTES;
+			case View.MEGABYTES:
+				return mView.getTextFieldLong() * MEGABYTES;
+			case View.GIGABYTES:
+				return mView.getTextFieldLong() * GIGABYTES;
+			default:
+				System.err.println("FileSizeCalculator.calculate() failed... Returned 0");
+				return 0L;
 		}
 	}
 }

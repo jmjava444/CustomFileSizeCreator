@@ -37,7 +37,7 @@ public class FileCreator implements Runnable
 		{
 			JOptionPane.showMessageDialog(JOptionPane.getRootFrame(),
 					"File could not be written to. Make sure " +
-					"the output file is not checked \"Read-only\'",
+					"the output file is not checked \"Read-only\"",
 					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}

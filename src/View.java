@@ -9,12 +9,14 @@
  * Copyright 2022, Joshua McKenzie, All rights reserved.
  ***************************************************************************/
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import static java.lang.Thread.sleep;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Objects;
 
 public class View extends JFrame implements ActionListener
 {
@@ -28,22 +30,16 @@ public class View extends JFrame implements ActionListener
 	private Main mMain;
 	
 	private final JFrame mMainFrame;
-	
 	private final JPanel mMainPanel;
 	private final JPanel mButtonPanel;
 	private final JPanel mTextPanel;
 	private final JPanel mProgressBarPanel;
-	
 	private final JLabel mFileSizeLabel;
 	private final JLabel mUnitsLabel;
-	
 	private final JTextField mTextField;
-	
 	private final JButton mSaveButton;
 	private final JButton mExitButton;
-	
 	private final JComboBox<String> mUnitsComboBox;
-	
 	private final JFileChooser mFileChooser;
 	
 	public View(Main pMain)
@@ -72,8 +68,8 @@ public class View extends JFrame implements ActionListener
 		mExitButton.addActionListener(this);
 		mSaveButton.setEnabled(false);
 		
-		// Add a key listener to the text field
-		addKeyListener();
+		// Add a keystroke listener to the text field
+		addKeystrokeListener();
 		
 		addComponentsToGUI();
 		
@@ -119,7 +115,7 @@ public class View extends JFrame implements ActionListener
 		mMainFrame.setVisible(true);
 	}
 	
-	private void addKeyListener()
+	private void addKeystrokeListener()
 	{
 		mTextField.setFocusTraversalKeysEnabled(true);
 		KeyListener keyListener = new KeyListener()
@@ -176,40 +172,19 @@ public class View extends JFrame implements ActionListener
 	
 	private long getMultiplier(String pUnits)
 	{
-		long multiplier;
-		if(pUnits.equals(BYTES))
-		{
-			multiplier = 1073741824L;
-		}
-		else if(pUnits.equals(KILOBYTES))
-		{
-			multiplier = 1048576L;
-		}
-		else if(pUnits.equals(MEGABYTES))
-		{
-			multiplier = 1024L;
-		}
-		else if(pUnits.equals(GIGABYTES))
-		{
-			multiplier = 1L;
-		}
-		else
-		{
-			multiplier = 0L;
-		}
-		return multiplier;
+		return switch(pUnits)
+				{
+					case BYTES -> 1073741824L;
+					case KILOBYTES -> 1048576L;
+					case MEGABYTES -> 1024L;
+					case GIGABYTES -> 1L;
+					default -> 0L;
+				};
 	}
 	
 	private void toggleSaveButton()
 	{
-		if(!mTextField.getText().isEmpty())
-		{
-			mSaveButton.setEnabled(true);
-		}
-		else
-		{
-			mSaveButton.setEnabled(false);
-		}
+		mSaveButton.setEnabled(!mTextField.getText().isEmpty());
 	}
 	
 	@Override
@@ -219,11 +194,11 @@ public class View extends JFrame implements ActionListener
 		{
 			mMain.exit();
 		}
-		ifSourceIsTextField(pEvent);
-		ifSourceIsSaveButton(pEvent);
+		isSourceTextField(pEvent);
+		isSourceSaveButton(pEvent);
 	}
-	
-	private void ifSourceIsTextField(ActionEvent pEvent)
+	// TODO: Make this method of type boolean. Why is it not?
+	private void isSourceTextField(ActionEvent pEvent)
 	{
 		if(pEvent.getSource() == mTextField)
 		{
@@ -233,8 +208,8 @@ public class View extends JFrame implements ActionListener
 			}
 		}
 	}
-	
-	private void ifSourceIsSaveButton(ActionEvent pEvent)
+	// TODO: Make this method of type boolean. Why is it not?
+	private void isSourceSaveButton(ActionEvent pEvent)
 	{
 		if(pEvent.getSource() == mSaveButton)
 		{
@@ -266,7 +241,8 @@ public class View extends JFrame implements ActionListener
 		}
 	}
 	
-	private ImageIcon createImageIcon(String path) {
+	private ImageIcon createImageIcon(String path)
+	{
 		java.net.URL imgURL = getClass().getResource(path);
 		if (imgURL != null) {
 			return new ImageIcon(imgURL);
@@ -309,24 +285,9 @@ public class View extends JFrame implements ActionListener
 		}
 	}
 	
-	private Main getMain()
-	{
-		return mMain;
-	}
-	
 	private void setMain(Main pMain)
 	{
 		mMain = pMain;
-	}
-	
-	private void setSaveButtonEnabled(boolean b)
-	{
-		mSaveButton.setEnabled(b);
-	}
-	
-	private JTextField getTextField()
-	{
-		return mTextField;
 	}
 	
 	private void clearTextField()
@@ -342,7 +303,7 @@ public class View extends JFrame implements ActionListener
 	
 	public String getCurrentUnit()
 	{
-		return mUnitsComboBox.getSelectedItem().toString();
+		return Objects.requireNonNull(mUnitsComboBox.getSelectedItem()).toString();
 	}
 	
 	public long getTextFieldLong()
