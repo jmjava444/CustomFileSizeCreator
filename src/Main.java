@@ -10,23 +10,11 @@
 
 public class Main
 {
-	private View mView;
 	
 	public static void main(String[] pArgs)
 	{
 		Main main = new Main();
-		main.run();
-	}
-	
-	private void run()
-	{
-		View view = new View(this);
-		setView(view);
-	}
-	
-	private void setView(View pView)
-	{
-		mView = pView;
+		new View(main);
 	}
 	
 	public void exit()
