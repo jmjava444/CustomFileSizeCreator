@@ -4,7 +4,7 @@
 ![Main UI Window](https://i.postimg.cc/Pf8R6gt6/Screenshot-2022-06-13-151620.png)
  
 # What's a .test file??
- I made up the file extension so you can find and delete them with a quick file search. What is contained in these files are just random integers. Each integer represents 1 byte of information, so if you specify a file of 512 bytes, there will be 512 random integers. You can open these files with notepad.exe or similar, however it is not recommended for really large files. Here is an example of a .text file in notepad.exe.
+ I made up the file extension so you can find and delete them with a quick file search. What is contained in these files are just random integers. Each integer represents 1 byte of information, so if you specify a file of 512 bytes, there will be 512 random integers. You can open these files with notepad.exe or similar, however it is not recommended for really large files. Here is an example of a .test file in notepad.exe.
  
  ![Test File Format](https://i.postimg.cc/VsVKRFrW/Screenshot-2022-06-13-154157.png)
 
