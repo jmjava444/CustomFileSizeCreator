@@ -14,19 +14,19 @@ The main window has a text field where you can enter how big you want the file t
 I'm not sure what the limit is on making big files, but I capped it to be a maximum of 64GB which is reasonable enough. I don't know why you'd need that big of a file anyways.
 
 ## Windows 11 Screenshots:
-![Main UI Window](https://i.imgur.com/6N849UG.png)
+![Main UI Window](https://i.postimg.cc/Pf8R6gt6/Screenshot-2022-06-13-151620.png)
 
-![File Drop-Down Menu](https://i.imgur.com/YHJgeta.png)
+![File Drop-Down Menu](https://i.postimg.cc/7LWK9Vj8/Screenshot-2022-06-13-152127.png)
 
-![Enter File Size](https://i.imgur.com/LvH84Kx.png)
+![Enter File Size](https://i.postimg.cc/kXQhCWRK/Screenshot-2022-06-13-151736.png)
 
-![Change Units](https://i.imgur.com/L2GzWWB.png)
+![Change Units](https://i.postimg.cc/4NkFjWyX/Screenshot-2022-06-13-151826.png)
 
-![Loading Bar Appears](https://i.imgur.com/iuz1DCw.png)
+![Loading Bar Appears](https://i.postimg.cc/s2Xn5864/Screenshot-2022-06-13-152220.png)
 
-![File Saved Successfully](https://i.imgur.com/8sZ9ekm.png)
+![File Saved Successfully](https://i.postimg.cc/BnJ7nt2y/Screenshot-2022-06-13-152321.png)
 
-![Error Message](https://i.imgur.com/NfOKk2Z.png)
+![Error Message](https://i.postimg.cc/P5K3ph4q/Screenshot-2022-06-13-152406.png)
 
 ## Linux Screenshots:
 ![Main UI Window](https://i.imgur.com/YF7q1JO.png)
