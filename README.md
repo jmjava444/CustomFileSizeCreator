@@ -1,7 +1,12 @@
 # CustomFileSizeCreator (Alpha Release!)
  Computer application made in Java: Creates a \*.test file of the user's desired size. Useful for testing a new flash drive or hard drive to see the read and write speeds on it.
  
- ![Main UI Window](https://i.imgur.com/6N849UG.png)
+![Main UI Window](https://i.postimg.cc/Pf8R6gt6/Screenshot-2022-06-13-151620.png)
+ 
+# What's a .test file??
+ I made up the file extension so you can find and delete them with a quick file search. What is contained in these files are just random integers. Each integer represents 1 byte of information, so if you specify a file of 512 bytes, there will be 512 random integers. You can open these files with notepad.exe or similar, however it is not recommended for really large files. Here is an example of a .text file in notepad.exe.
+ 
+ ![Test File Format](https://i.postimg.cc/VsVKRFrW/Screenshot-2022-06-13-154157.png)
 
 I utilized the Java swing library and file chooser to make the GUI for it. This application has been tested on Windows and Linux, however it should run on Mac too if you have a recent version of Java installed on your PC. This application supports multi-threading to update the progress bar as the file is being written to disk. I made this project for fun, and thus it has no warranty. Use at your own risk. I would appreciate any feedback that you give.
 
