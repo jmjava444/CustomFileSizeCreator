@@ -32,10 +32,3 @@ I'm not sure what the limit is on making big files, but I capped it to be a maxi
 ![File Saved Successfully](https://i.postimg.cc/BnJ7nt2y/Screenshot-2022-06-13-152321.png)
 
 ![Error Message](https://i.postimg.cc/P5K3ph4q/Screenshot-2022-06-13-152406.png)
-
-## Linux Screenshots:
-![Main UI Window](https://i.imgur.com/YF7q1JO.png)
-
-![Loading Creating the File](https://i.imgur.com/zdARqDo.png)
-
-![File is completed](https://i.imgur.com/sIktVEK.png)
